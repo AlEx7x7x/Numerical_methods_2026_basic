@@ -1,11 +1,8 @@
-"""Лабораторна робота №6, програма 2: LU-розклад та ітераційне уточнення.
-L - нижня трикутна, U - верхня трикутна з одиничною діагоналлю (A = L*U)."""
 import math
 
-EPS = 1e-12      # задана точність
+EPS = 1e-12      
 
 
-# ---------- введення / виведення ----------
 def read_matrix(path):
     with open(path) as f:
         n = int(f.readline())
@@ -26,7 +23,6 @@ def write_lu(path, L, U):
                 f.write(" ".join(f"{v:.10e}" for v in row) + "\n")
 
 
-# ---------- допоміжні операції ----------
 def mat_vec(A, x):
     return [sum(a * xj for a, xj in zip(row, x)) for row in A]
 
@@ -36,7 +32,6 @@ def norm(v):
     return math.sqrt(sum(t * t for t in v))
 
 
-# ---------- LU-розклад ----------
 def lu_decompose(A):
     n = len(A)
     L = [[0.0] * n for _ in range(n)]
@@ -64,14 +59,13 @@ def lu_solve(L, U, b):
     return x
 
 
-# ---------- ітераційне уточнення ----------
 def refine(A, L, U, b, x0, eps=EPS, max_iter=50):
     x = x0[:]
     history = []
     for it in range(1, max_iter + 1):
         Ax = mat_vec(A, x)
-        r = [bi - ai for bi, ai in zip(b, Ax)]          # нев'язка
-        dx = lu_solve(L, U, r)                          # A*dx = r
+        r = [bi - ai for bi, ai in zip(b, Ax)]         
+        dx = lu_solve(L, U, r)                         
         x = [xi + di for xi, di in zip(x, dx)]
         rel_dx = norm(dx) / norm(x)
         res = norm([bi - ai for bi, ai in zip(b, mat_vec(A, x))])
