@@ -68,7 +68,6 @@ if __name__ == "__main__":
         I_2 = h / 12 * (fa + 4 * fl + fm) + h / 12 * (fm + 4 * fr + fb)
         if abs(I_1 - I_2) <= max(delta, 1e-15 * abs(I_2)) or depth >= 25:
             return I_2, 1
-        # delta залежить від кроку: на половинному відрізку - delta/2
         L, nl = adaptive(fa, fl, fm, a_, m, delta / 2, depth + 1)
         R, nr = adaptive(fm, fr, fb, m, b_, delta / 2, depth + 1)
         return L + R, nl + nr
