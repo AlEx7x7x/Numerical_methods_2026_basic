@@ -1,7 +1,3 @@
-"""Лабораторна робота №5
-Складова формула Сімпсона, методи Рунге-Ромберга, Ейткена, адаптивний алгоритм.
-f(x) = 50 + 20 sin(pi x / 12) + 5 exp(-0.2 (x-12)^2), x in [0, 24]
-"""
 import math
 import numpy as np
 import matplotlib
@@ -15,13 +11,9 @@ def f(x):
     return 50 + 20 * np.sin(np.pi * x / 12) + 5 * np.exp(-0.2 * (x - 12) ** 2)
 
 
-# 2. Точне значення інтегралу (аналітично):
-# int 50 dx = 50(b-a); int 20 sin(pi x/12) dx = 0 за повний період;
-# int 5 exp(-0.2 (x-12)^2) dx = 5 * sqrt(pi/0.2) * erf(12*sqrt(0.2))
 I0 = 50 * (b - a) + 5 * math.sqrt(math.pi / 0.2) * math.erf(12 * math.sqrt(0.2))
 
 
-# 3. Складова формула Сімпсона (N - парне)
 def simpson(N, func=f, a=a, b=b):
     if N % 2:
         N += 1
@@ -34,7 +26,6 @@ def simpson(N, func=f, a=a, b=b):
 if __name__ == "__main__":
     print(f"I0 = {I0:.12f}")
 
-    # 4. Залежність похибки від N
     Ns = np.arange(10, 1001, 2)
     errs = np.array([abs(simpson(N) - I0) for N in Ns])
     eps = 1e-12
@@ -45,25 +36,21 @@ if __name__ == "__main__":
     for N in (10, 20, 40, 80, 160, 320, 640, 1000):
         print(f"N={N:5d}  I={simpson(N):.12f}  err={abs(simpson(N)-I0):.3e}")
 
-    # 5. N0 ~ Nopt/10, кратне 8
     N0 = max(8, int(round(Nopt / 10 / 8)) * 8)
     eps0 = abs(simpson(N0) - I0)
     print(f"N0 = {N0}, I(N0) = {simpson(N0):.12f}, eps0 = {eps0:.3e}")
 
-    # 6. Рунге-Ромберг (p = 4, q = 2 -> 2^4 - 1 = 15)
     I1, I2, I4 = simpson(N0), simpson(N0 // 2), simpson(N0 // 4)
     IR = I1 + (I1 - I2) / 15
     epsR = abs(IR - I0)
     print(f"I(N0)={I1:.12f} I(N0/2)={I2:.12f} I(N0/4)={I4:.12f}")
     print(f"IR = {IR:.12f}, epsR = {epsR:.3e}")
 
-    # 7. Ейткен
     IE = (I2 ** 2 - I1 * I4) / (2 * I2 - (I1 + I4))
     p = math.log(abs((I4 - I2) / (I2 - I1))) / math.log(2)
     epsE = abs(IE - I0)
     print(f"IE = {IE:.12f}, p = {p:.4f}, epsE = {epsE:.3e}")
 
-    # 9. Адаптивний алгоритм
     calls = 0
 
     def fc(x):
@@ -101,8 +88,6 @@ if __name__ == "__main__":
         ad.append((d, v, e, c, n))
         print(f"{d:.0e}  {v:.12f}  {e:.3e}  {c}  {n}")
 
-    # Для порівняння: скільки викликів f у звичайній Сімпсона з тією ж точністю
-    # --- Графіки ---
     xs = np.linspace(a, b, 1000)
     plt.figure(figsize=(6.5, 4))
     plt.plot(xs, f(xs), label=r"$f(x)=50+20\sin(\pi x/12)+5e^{-0.2(x-12)^2}$")
@@ -128,7 +113,6 @@ if __name__ == "__main__":
     plt.ylim(min(vals) / 10, max(vals) * 10); plt.grid(axis="y", alpha=.3)
     plt.savefig("fig3_comparison.png", dpi=150); plt.close()
 
-    # Похибки методів залежно від N0
     N_list = np.arange(8, 321, 8)
     e_s, e_r, e_e = [], [], []
     for n in N_list:
